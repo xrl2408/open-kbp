@@ -16,6 +16,9 @@ submissions/
 outputs/*
 !outputs/prediction_error/
 !outputs/prediction_error/*.png
+!outputs/prediction_error/*.svg
+!outputs/patient_level_errors/
+!outputs/patient_level_errors/*.png
 
 # Local OS/editor files
 .DS_Store

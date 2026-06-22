@@ -74,7 +74,39 @@ WSL 项目路径：
   - 当前输出：docs/experiment_summary.csv
 - 已新增 scripts/visualize_prediction_error.py
   - 作用：对单个 validation patient 画 CT、ROI overlay、true dose、predicted dose、absolute error。
+  - 已支持高清 PNG、SVG/PDF 输出、固定 slice、按 true dose/ROI/误差选 slice。
+  - 已支持 --compare-models，对 epoch 50 和 epoch 100 在同一 patient、同一 slice 上并排比较 predicted dose 和 absolute error。
   - 当前输出：
     - outputs/prediction_error/baseline_full_50_pt_224_error.png
     - outputs/prediction_error/baseline_full_100_pt_224_error.png
+    - outputs/prediction_error/baseline_full_50_pt_224_error.svg
+    - outputs/prediction_error/baseline_full_100_pt_224_error.svg
+    - outputs/prediction_error/baseline_full_50_vs_baseline_full_100_pt_224_min-error_comparison.png
+    - outputs/prediction_error/baseline_full_50_vs_baseline_full_100_pt_224_max-error_comparison.png
+    - 同名 .svg 文件也已生成
 - 已新增 .gitignore，避免误提交 results、模型权重、cache；但允许提交 outputs/prediction_error/*.png 这类选定可视化结果。
+
+2026-06-22 patient-level error analysis 进展：
+- 已新增 scripts/evaluate_patient_level_errors.py
+  - 作用：逐个 validation patient 计算不同模型的 dose MAE。
+  - 当前默认比较 baseline_full_50 和 baseline_full_100。
+  - 当前输出：docs/patient_level_dose_errors.csv
+- 已新增 scripts/visualize_patient_level_errors.py
+  - 作用：读取 patient-level CSV，生成 epoch 50 vs epoch 100 的散点图和差值柱状图。
+  - 当前输出：
+    - outputs/patient_level_errors/baseline_full_50_vs_baseline_full_100_patient_mae_scatter.png
+    - outputs/patient_level_errors/baseline_full_50_vs_baseline_full_100_patient_mae_difference.png
+- 主要结果：
+  - baseline_full_50: n=40, mean dose MAE 8.451, min 5.097, max 13.840
+  - baseline_full_100: n=40, mean dose MAE 7.962, min 4.418, max 13.112
+  - baseline_full_100 相比 baseline_full_50 在 33/40 个 validation patients 上 dose MAE 更低，在 7/40 个 patients 上更差。
+  - 最大改善 patients：pt_210 (-2.434), pt_203 (-1.645), pt_227 (-1.429), pt_223 (-1.428), pt_204 (-1.345)。
+  - 最大退化 patients：pt_230 (+2.662), pt_225 (+1.011), pt_240 (+0.873), pt_233 (+0.260), pt_218 (+0.135)。
+- 当前解释：
+  - epoch 100 的全局 dose score 更好不是由少数 patient 偶然造成，而是大多数 validation patients 都有改善。
+  - 但 epoch 50 的 DVH score 更好，说明 voxel-level MAE 与临床结构指标并不完全一致。
+  - pt_210 可以作为 epoch 100 明显改善 case；pt_230 可以作为 epoch 100 明显退化/failure case。
+- 建议下一步：
+  1. 为 pt_210 和 pt_230 生成 epoch 50 vs 100 的 min/max error comparison 图，用于 meeting 展示。
+  2. 在 baseline 文档中补充 patient-level quantitative analysis 和 qualitative failure-case discussion。
+  3. 开始 MC dropout uncertainty prototype：先对单个 patient 输出 mean dose、uncertainty std map、absolute error map，再检查 uncertainty 与 error 的空间相关性。
