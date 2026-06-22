@@ -1,0 +1,24 @@
+# Python cache and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Generated experiment artifacts
+results/
+outputs/
+submissions/
+!outputs/
+outputs/*
+!outputs/prediction_error/
+!outputs/prediction_error/*.png
+
+# Local OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

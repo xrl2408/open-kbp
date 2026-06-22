@@ -1,0 +1,6 @@
+model,epoch,training_data,validation_patients,dose_score,dvh_score,notes
+baseline,,early/dry-run setup,5,23.516,52.456,Partial validation predictions only.
+baseline_full_20,20,full training set,40,15.526,28.913,Full training set; full 40-patient validation set.
+baseline_full_50,50,full training set,40,8.451,10.152,Full training set; full 40-patient validation set.
+baseline_full_100,100,full training set,40,7.962,10.666,Full training set; full 40-patient validation set.
+baseline_full_150,150,full training set,40,8.555,13.247,Full training set; full 40-patient validation set.
